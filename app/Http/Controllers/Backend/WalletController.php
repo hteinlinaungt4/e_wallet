@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use App\Notifications\GeneralNotification;
+use Illuminate\Log\Logger;
 use Illuminate\Support\Facades\Notification;
 
 class WalletController extends Controller
@@ -71,6 +72,7 @@ class WalletController extends Controller
             $to_account_wallet->increment('amount', $amount);
             $to_account_wallet->update();
 
+
             $ref_no = UUIDGenerate::refNumber();
 
             $to_account_transactions= new Transaction();
@@ -79,7 +81,7 @@ class WalletController extends Controller
             $to_account_transactions->user_id=$to_account->id;
             $to_account_transactions->type=1;
             $to_account_transactions->amount=$amount;
-            $to_account_transactions->source_id=0;
+            $to_account_transactions->source_id=Auth::guard('admin_user')->user()->id;
             $to_account_transactions->description=$description;
             $to_account_transactions->save();
 
@@ -95,6 +97,7 @@ class WalletController extends Controller
             DB::commit();
             return redirect()->route('wallet')->with(['success' => "You have been added money Successfully!"]);
         } catch (\Exception $e) {
+            Logger($e);
             DB::rollBack();
             return back()->with(['fail' => 'Something went wrong']);
         }

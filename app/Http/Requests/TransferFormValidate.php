@@ -24,6 +24,7 @@ class TransferFormValidate extends FormRequest
         return [
             'to_phone' => 'required',
             'amount' => 'required|numeric|between:1000,1000000',
+            'hash_value' => 'required',
         ];
     }
     public function messages(): array

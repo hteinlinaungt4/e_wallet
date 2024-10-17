@@ -54,7 +54,6 @@ class AdminLoginController extends Controller
 
     public function logout(Request $request)
     {
-        Logger($request);
         $this->guard()->logout();
 
         $request->session()->invalidate();

@@ -45,7 +45,13 @@
                 </div>
                 <hr>
                 <div class="d-flex justify-content-between">
-                    <h5 class="text-muted">To</h5>
+                    <h5 class="text-muted">
+                        @if ($transaction->type == 2)
+                            To
+                        @elseif ($transaction->type == 1)
+                            From
+                        @endif
+                    </h5>
                     @if ($transaction->source_id == 0)
                         <span>Bank</span>
                     @else

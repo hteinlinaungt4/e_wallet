@@ -207,16 +207,29 @@ class PageController extends Controller
     // transaction
     public function transaction(Request $request){
         $user = Auth::guard('web')->user();
-        $transactions=Transaction::with('user','source')->where('user_id',$user->id)->orderBy('created_at','desc');
-        if($request->type){
-            $transactions=$transactions->where('type',$request->type);
+        $transactions = Transaction::with('user', 'source')
+            ->where('user_id', $user->id)
+            ->orderBy('created_at', 'desc');
+
+        // Check if the 'type' is not 'all'
+        if ($request->type) {
+            $transactions = $transactions->where('type', $request->type);
         }
-        if($request->date){
-            $transactions=$transactions->whereDate('created_at',$request->date);
+
+        // Apply date filter if provided
+        if ($request->date) {
+            $transactions = $transactions->whereDate('created_at', $request->date);
         }
-        $transactions= $transactions->paginate(5);
-        return view('frontend.transaction',compact('transactions'));
+
+        // Paginate the results
+        $transactions = $transactions->paginate(5);
+
+
+
+        // Return the view with the transactions data
+        return view('frontend.transaction', compact('transactions'));
     }
+
 
     // pdf generate
     public function pdf(Request $request){

@@ -14,7 +14,7 @@
                     <div class="col-6">
                         <div class="input-group mb-3">
                             <label class="input-group-text p-1" for="inputGroupSelect02">Date</label>
-                            <input type="text" class="form-control p-1" value="{{ request()->date ?? '' }}" id="datepicker">
+                            <input type="text" class="form-control p-1" value="{{ request()->date ?? '' }}" id="datepicker" placeholder="All">
                         </div>
                     </div>
                     <div class="col-6">
@@ -45,7 +45,15 @@
                                 </h6>
                             </div>
                             <div>
-                                <h6>To <span>{{ $transaction->user->name }}</span> </h6>
+                                <h6>
+                                    @if ($transaction->type == 2)
+                                        To
+                                    @elseif ($transaction->type == 1)
+                                        From
+                                    @endif
+
+                                    <span>{{ $transaction->source->name }}</span>
+                                </h6>
                                 <h6><span>{{ $transaction->created_at }}</span> </h6>
                             </div>
                         </div>
@@ -73,18 +81,31 @@
         });
         $('#datepicker').daterangepicker({
             "singleDatePicker": true,
-            "autoApply": true,
+            "autoApply": false,
+            'autoUpdateInput':false,
             "locale": {
                 "format": "YYYY-MM-DD",
             },
         });
 
         $('#datepicker').on('apply.daterangepicker', function(ev, picker) {
+
+            $(this).val(picker.startDate.format("YYYY-MM-DD"));
             var date = $('#datepicker').val();
             var type = $('.type').val();
             history.pushState(null, '', `?date=${date}&type=${type}`);
             window.location.reload();
         });
+
+        $('#datepicker').on('cancel.daterangepicker', function(ev, picker) {
+            $(this).val('');
+
+            var date = $('#datepicker').val();
+            var type = $('.type').val();
+            history.pushState(null, '', `?date=${date}&type=${type}`);
+            window.location.reload();
+        });
+
 
         // $('.type').change(function(e) {
         //     e.preventDefault();
@@ -116,6 +137,11 @@
     if (type) {
         query.push(`type=${type}`);
     }
+
+    if (!type) {
+        query.push(`type=${type}`);
+    }
+
 
     // Update the URL only if there's a query
     if (query.length > 0) {

@@ -15,13 +15,12 @@ return new class extends Migration
             $table->id();
             $table->string('ref_no');
             $table->string('trx_id');
-            $table->bigInteger('user_id');
+            $table->foreignId('user_id')->constrained()->cascadeOnDelete();
             $table->tinyInteger('type')->comment('1 =>income,2=>expense');
             $table->decimal('amount',20,2);
-            $table->bigInteger('source_id');
             $table->text('description')->nullable();
             $table->timestamps();
-            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
+            $table->foreignId('source_id')->constrained('users')->cascadeOnDelete();
         });
     }
 
